@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇫🇷 Monitor Programmes — Éducation Nationale</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue-marianne:#000091; --blue-hi:#1212ff; --blue-soft:#e3e3fd;
+  --red-marianne:#E1000F; --red-soft:#ffe9e9;
+  --gold:#fbbf24; --gold-hi:#f59e0b;
+  --green:#16a34a; --green-soft:#dcfce7;
+  --white:#fff; --grey-50:#f6f6f6; --grey-100:#eee; --grey-200:#e5e5e5;
+  --grey-500:#929292; --grey-700:#3a3a3a; --grey-900:#1e1e1e;
+  --font-mono:'SF Mono',Menlo,Consolas,monospace;
+  --font-sans:'Marianne',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --bg-app:#f6f6f6; --bg-panel:#fff; --border:#e5e5e5; --text:#1e1e1e; --text-muted:#929292;
+}
+[data-theme="dark"]{
+  --white:#1a1d24; --grey-50:#12141a; --grey-100:#1e2129; --grey-200:#2a2e38;
+  --grey-500:#7a8090; --grey-700:#b8bcc6; --grey-900:#f0f2f5;
+  --blue-soft:#1e1e4d;
+  --bg-app:#12141a; --bg-panel:#1a1d24; --border:#2a2e38; --text:#f0f2f5; --text-muted:#7a8090;
+}
+html{height:100%}
+body{font-family:var(--font-sans);background:var(--bg-app);color:var(--text);font-size:13px;line-height:1.5;min-height:100%;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--grey-100)}
+::-webkit-scrollbar-thumb{background:var(--grey-500);border-radius:4px}
+
+.tricolore{height:6px;background:linear-gradient(to right,#000091 0 33.33%,#fff 33.33% 66.66%,#E1000F 66.66% 100%)}
+.bloc-marque{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--bg-panel);border-bottom:1px solid var(--border)}
+.marianne{width:38px;height:38px;border-radius:50%;background:#000091;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;letter-spacing:.5px;flex-shrink:0;border:2px solid #E1000F}
+.bloc-marque-txt{font-size:11px;color:var(--grey-700);line-height:1.3}
+.bloc-marque-txt strong{display:block;color:var(--blue-marianne);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.bloc-marque-devise{margin-left:auto;font-size:9px;color:var(--grey-500);text-transform:uppercase;letter-spacing:1.2px;text-align:right}
+.bloc-marque-devise em{display:block;font-style:normal}
+
+.topbar{background:var(--bg-panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:10px 16px;gap:12px;position:sticky;top:6px;z-index:100;flex-wrap:wrap;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.brand{font-size:14px;font-weight:800;color:var(--blue-marianne);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.2);animation:pulse 1.8s infinite;flex-shrink:0}
+.brand .dot.offline{background:var(--red-marianne);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.brand .sub{color:var(--grey-500);font-weight:400;font-size:12px;font-family:var(--font-mono)}
+.topbar-right{margin-left:auto;display:flex;gap:12px;font-family:var(--font-mono);font-size:11px;align-items:center;flex-wrap:wrap}
+.topbar-stat{display:flex;gap:5px;color:var(--grey-700);align-items:center;white-space:nowrap}
+.topbar-stat .val{color:var(--blue-marianne);font-weight:700;padding:2px 6px;border-radius:3px;background:var(--blue-soft)}
+.topbar-stat .val.green{color:var(--green);background:var(--green-soft)}
+.topbar-stat .val.amber{color:#8a5e00;background:rgba(251,191,36,.2)}
+.topbar-stat .val.red{color:var(--red-marianne);background:var(--red-soft)}
+.theme-toggle,.settings-btn{background:var(--bg-panel);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-toggle:hover,.settings-btn:hover{background:var(--blue-soft);border-color:var(--blue-marianne);transform:scale(1.05)}
+
+.app{display:grid;grid-template-columns:300px 1fr 300px;height:calc(100vh - 130px);overflow:hidden}
+.sidebar{background:var(--bg-panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.sb-head{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--grey-50);flex-shrink:0}
+.sb-title{font-size:12px;font-weight:700;color:var(--blue-marianne);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.sb-title::before{content:'';width:4px;height:14px;background:var(--gold)}
+.sb-count{font-family:var(--font-mono);font-size:11px;color:var(--grey-500);margin-top:6px}
+.sb-list{flex:1;overflow-y:auto;padding:8px;min-height:0}
+
+.level-item{background:var(--bg-panel);border:1px solid var(--border);border-left:4px solid var(--grey-500);border-radius:4px;padding:8px 10px;margin-bottom:5px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px}
+.level-item:hover{border-color:var(--blue-marianne);background:var(--blue-soft);transform:translateX(2px)}
+.level-item.active{background:var(--blue-soft);border-color:var(--blue-marianne);border-left-color:var(--blue-marianne);box-shadow:0 0 0 2px var(--blue-soft)}
+.level-item.active .level-check{background:var(--blue-marianne);border-color:var(--blue-marianne);color:#fff}
+.level-check{width:16px;height:16px;border:2px solid var(--grey-500);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:transparent;transition:all .15s}
+.level-info{flex:1;min-width:0}
+.level-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.level-count{font-family:var(--font-mono);font-size:9px;color:var(--grey-500);text-transform:uppercase;margin-top:2px;letter-spacing:.5px}
+.level-count .badge{background:var(--blue-marianne);color:#fff;padding:1px 6px;border-radius:8px;font-weight:700;margin-right:4px}
+
+.drop-zone{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;background:var(--grey-50);transition:all .2s;cursor:pointer;margin:12px}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--blue-marianne);background:var(--blue-soft)}
+.drop-zone .icon{font-size:32px;margin-bottom:8px}
+.drop-zone .title{font-weight:700;color:var(--blue-marianne);margin-bottom:4px;font-size:13px}
+.drop-zone .sub{font-size:11px;color:var(--grey-500)}
+
+.center{background:var(--bg-app);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.search-bar{padding:14px 16px;background:var(--bg-panel);border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.search-bar input[type=text]{flex:1;min-width:180px;background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;padding:11px 14px;font-size:14px;font-family:var(--font-sans);color:var(--text)}
+.search-bar input[type=text]:focus{outline:none;border-color:var(--blue-marianne);box-shadow:0 0 0 2px var(--blue-soft)}
+.search-bar select{background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;padding:11px 12px;font-size:13px;font-family:var(--font-sans);color:var(--text)}
+.search-btn{background:var(--blue-marianne);color:#fff;border:1px solid var(--blue-marianne);font-size:13px;font-weight:700;padding:11px 20px;border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--font-sans)}
+.search-btn:hover{background:var(--blue-hi);border-color:var(--blue-hi)}
+.search-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.mode-tabs{display:flex;gap:0;padding:0 10px;border-bottom:1px solid var(--border);background:var(--bg-panel);flex-shrink:0;overflow-x:auto}
+.mode-tab{background:transparent;border:none;color:var(--grey-700);font-size:12px;font-weight:500;padding:10px 14px;cursor:pointer;transition:all .15s;border-bottom:3px solid transparent;font-family:var(--font-sans);white-space:nowrap}
+.mode-tab:hover{background:var(--grey-50);color:var(--blue-marianne)}
+.mode-tab.active{color:var(--blue-marianne);border-bottom-color:var(--blue-marianne);font-weight:700}
+
+.filters-bar{display:flex;gap:10px;padding:10px 16px;background:var(--blue-soft);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;font-size:12px}
+.filters-bar[hidden]{display:none}
+.filter-label{font-weight:700;color:var(--blue-marianne);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.year-tag{background:var(--bg-panel);color:var(--text);border:1px solid var(--border);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:var(--font-mono)}
+.year-tag:hover{border-color:var(--blue-marianne);color:var(--blue-marianne)}
+.year-tag.active{background:var(--blue-marianne);color:#fff;border-color:var(--blue-marianne)}
+.year-tag .ycount{opacity:.7;font-size:9px;margin-left:3px}
+.filters-clear{background:var(--red-soft);color:var(--red-marianne);border:1px solid var(--red-marianne);padding:5px 12px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-sans);margin-left:auto}
+.filters-clear:hover{background:var(--red-marianne);color:#fff}
+
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:14px;background:var(--bg-panel);border-bottom:1px solid var(--border);flex-shrink:0}
+.kpi{background:var(--grey-50);border:1px solid var(--border);border-left:4px solid var(--blue-marianne);border-radius:4px;padding:10px 12px;transition:all .15s}
+.kpi:hover{border-color:var(--blue-marianne);background:var(--blue-soft);transform:translateY(-2px)}
+.kpi .label{font-size:9px;font-weight:700;color:var(--grey-500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.kpi .value{font-size:16px;font-weight:800;color:var(--blue-marianne);font-family:var(--font-mono);line-height:1.1;word-break:break-all}
+.kpi .sub{font-size:9px;color:var(--grey-500);margin-top:3px;font-family:var(--font-mono)}
+.kpi.green{border-left-color:var(--green)} .kpi.green .value{color:var(--green)}
+.kpi.amber{border-left-color:var(--gold)} .kpi.amber .value{color:#8a5e00}
+.kpi.red{border-left-color:var(--red-marianne)} .kpi.red .value{color:var(--red-marianne)}
+
+.results{flex:1;overflow-y:auto;padding:14px;min-height:0}
+.result-card{background:var(--bg-panel);border:1px solid var(--border);border-left:4px solid var(--blue-marianne);border-radius:4px;padding:14px 16px;margin-bottom:10px;transition:all .15s;animation:fadeInUp .35s ease-out}
+.result-card:hover{border-color:var(--blue-marianne);box-shadow:0 4px 12px rgba(0,0,145,.08);transform:translateX(2px)}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.rc-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+.rc-title{font-size:14px;font-weight:700;color:var(--text);flex:1;line-height:1.35}
+.rc-badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
+.rc-badge{font-family:var(--font-mono);font-size:9px;font-weight:700;padding:3px 7px;border-radius:3px;text-transform:uppercase;white-space:nowrap;letter-spacing:.5px}
+.rc-badge.niveau{background:var(--blue-marianne);color:#fff}
+.rc-badge.disc{background:var(--gold);color:#1e1e1e;text-transform:none}
+.rc-badge.voie{background:var(--green);color:#fff;text-transform:none}
+.rc-badge.year{background:var(--blue-soft);color:var(--blue-marianne)}
+.rc-badge.abroge{background:var(--red-marianne);color:#fff}
+.rc-badge.vigueur{background:var(--green-soft);color:var(--green)}
+.rc-org{color:var(--grey-700);font-weight:600;font-size:12px;margin-bottom:6px}
+.rc-meta{display:flex;gap:6px;font-family:var(--font-mono);font-size:10px;color:var(--grey-500);flex-wrap:wrap;margin-top:8px}
+.rc-meta .tag{background:var(--grey-50);padding:3px 8px;border-radius:3px;border:1px solid var(--border);color:var(--grey-700)}
+.rc-meta a{color:var(--blue-marianne);text-decoration:none;font-weight:700}
+.rc-meta a:hover{text-decoration:underline}
+
+.empty,.loading{text-align:center;padding:60px 20px;color:var(--grey-500);font-size:14px}
+
+.help-banner{padding:12px 16px;background:rgba(251,191,36,.15);border-bottom:1px solid var(--gold);color:#8a5e00;font-size:12px;line-height:1.6;display:flex;align-items:center;gap:10px}
+.help-banner.info{background:var(--blue-soft);border-bottom-color:var(--blue-marianne);color:var(--blue-marianne)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;padding:4px}
+.cat-card{background:var(--bg-panel);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:4px;padding:12px 14px;cursor:pointer;transition:all .15s;animation:fadeInUp .35s ease-out}
+.cat-card:hover{border-color:var(--blue-marianne);box-shadow:0 4px 12px rgba(0,0,145,.1);transform:translateY(-2px)}
+.cat-card.active{background:var(--blue-soft);border-color:var(--blue-marianne);border-left-color:var(--blue-marianne);box-shadow:0 0 0 2px var(--blue-soft)}
+.cat-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.cat-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.cat-count-badge{font-family:var(--font-mono);font-size:10px;font-weight:700;background:var(--blue-marianne);color:#fff;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.cat-stats{display:flex;gap:8px;font-size:10px;font-family:var(--font-mono);color:var(--grey-700);flex-wrap:wrap;margin-top:6px}
+.cat-stats .cat-stat{background:var(--grey-50);padding:3px 7px;border-radius:3px;border:1px solid var(--border)}
+
+.bar-row{display:grid;grid-template-columns:180px 1fr 60px;align-items:center;gap:8px;margin-bottom:8px;font-size:11px}
+.bar-row .name{color:var(--grey-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-mono);font-weight:600}
+.bar-track{background:var(--grey-100);border-radius:3px;height:18px;overflow:hidden;position:relative}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--blue-marianne) 0%,var(--blue-hi) 100%);border-radius:3px;width:0;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.bar-fill.gold{background:linear-gradient(90deg,#8a5e00 0%,var(--gold) 100%)}
+.bar-fill.green{background:linear-gradient(90deg,var(--green) 0%,#22c55e 100%)}
+.bar-row .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--blue-marianne);font-weight:700;font-family:var(--font-mono)}
+
+.pie-container{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;padding:8px}
+.pie-svg-wrap{position:relative;flex-shrink:0}
+.pie-svg{display:block;overflow:visible}
+.pie-slice{transition:all .25s ease;cursor:pointer;stroke:var(--bg-panel);stroke-width:1.5;opacity:0}
+.pie-slice.visible{opacity:1}
+.pie-slice:hover{filter:brightness(1.15)}
+.pie-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.pie-center .pie-total{font-size:22px;font-weight:800;color:var(--blue-marianne);font-family:var(--font-mono);line-height:1}
+.pie-center .pie-label{font-size:9px;color:var(--grey-500);text-transform:uppercase;letter-spacing:.6px;margin-top:3px}
+.pie-legend{flex:1;min-width:240px;max-height:420px;overflow-y:auto}
+.pie-legend-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;transition:all .15s;font-size:12px}
+.pie-legend-item:hover{background:var(--grey-50)}
+.pie-legend-item.active{background:var(--blue-soft);font-weight:700}
+.pie-legend-color{width:14px;height:14px;border-radius:3px;flex-shrink:0;border:1px solid rgba(0,0,0,.1)}
+.pie-legend-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pie-legend-val{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--blue-marianne);white-space:nowrap}
+.pie-legend-pct{font-family:var(--font-mono);font-size:10px;color:var(--grey-500);white-space:nowrap;min-width:44px;text-align:right}
+
+.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:14px}
+.analytics-panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;animation:fadeInUp .35s ease-out}
+.analytics-panel .panel-head{padding:11px 14px;background:var(--grey-50);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--blue-marianne);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.analytics-panel .panel-head::before{content:'';width:4px;height:12px;background:var(--gold)}
+.analytics-panel .panel-body{padding:14px}
+
+.matrix-wrap{overflow-x:auto;padding:4px}
+.matrix{width:100%;border-collapse:collapse;font-size:11px}
+.matrix th,.matrix td{padding:6px 8px;border:1px solid var(--border);text-align:center}
+.matrix th{background:var(--blue-marianne);color:#fff;font-weight:700;position:sticky;top:0;z-index:1}
+.matrix th.row-head{text-align:left;background:var(--blue-soft);color:var(--blue-marianne);position:sticky;left:0;z-index:2;min-width:180px;max-width:220px}
+.matrix td.row-head{text-align:left;background:var(--grey-50);font-weight:600;color:var(--grey-700);position:sticky;left:0;z-index:1;min-width:180px}
+.matrix td.cell{cursor:pointer;transition:all .15s;font-family:var(--font-mono);font-weight:700}
+.matrix td.cell:hover{transform:scale(1.05);border-color:var(--blue-marianne)}
+.matrix td.cell.zero{color:var(--grey-500);background:var(--grey-50);cursor:default}
+.matrix td.cell.zero:hover{transform:none;border-color:var(--border)}
+
+.line-chart-wrap{background:var(--bg-panel);border:1px solid var(--border);border-radius:6px;padding:14px}
+.line-chart-svg{width:100%;height:auto;display:block}
+.line-path{fill:none;stroke:var(--blue-marianne);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:3000;stroke-dashoffset:3000;animation:drawLine 1.5s ease-out forwards}
+@keyframes drawLine{to{stroke-dashoffset:0}}
+.line-area{fill:url(#areaGrad)}
+.line-point{fill:var(--gold);stroke:var(--bg-panel);stroke-width:2;cursor:pointer;transition:all .2s}
+.line-point:hover{r:6;fill:var(--red-marianne)}
+.line-grid{stroke:var(--border);stroke-width:.5;stroke-dasharray:3 3}
+.line-axis{font-family:var(--font-mono);font-size:10px;fill:var(--grey-700)}
+
+.export-group{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--border);background:var(--bg-panel);flex-wrap:wrap}
+.export-btn{flex:1;min-width:100px;background:var(--bg-panel);color:var(--text);border:1px solid var(--border);font-size:12px;font-weight:600;padding:10px 14px;border-radius:4px;cursor:pointer;transition:all .15s;font-family:var(--font-sans)}
+.export-btn:hover:not(:disabled){border-color:var(--blue-marianne);color:var(--blue-marianne);background:var(--blue-soft)}
+.export-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.right{background:var(--bg-panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.rs-head{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--grey-50);font-size:12px;font-weight:700;color:var(--blue-marianne);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.rs-head::before{content:'';width:4px;height:14px;background:var(--gold)}
+.rs-body{flex:1;overflow-y:auto;padding:12px;min-height:0}
+.intel-panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;margin-bottom:10px;overflow:hidden}
+.intel-head{padding:9px 12px;background:var(--grey-50);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--blue-marianne);letter-spacing:.5px;text-transform:uppercase}
+.intel-body{padding:10px}
+.intel-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--grey-100);font-size:12px}
+.intel-row:last-child{border-bottom:none}
+.intel-row .k{color:var(--grey-700)}
+.intel-row .v{color:var(--text);font-weight:700;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;font-family:var(--font-mono);font-size:11px}
+.intel-row .v.cyan{color:var(--blue-marianne)}
+.intel-row .v.green{color:var(--green)}
+.intel-row .v.amber{color:#8a5e00}
+.intel-row .v.red{color:var(--red-marianne)}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--grey-900);color:#fff;padding:12px 20px;border-radius:6px;font-size:13px;font-weight:600;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:slideInRight .3s ease-out;max-width:400px}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red-marianne)}
+.toast.info{background:var(--blue-marianne)}
+@keyframes slideInRight{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+.burger-menu{display:none;background:var(--bg-panel);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:6px;cursor:pointer;font-size:16px;align-items:center;justify-content:center}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200}
+.mobile-overlay.visible{display:block}
+
+@media(max-width:900px){
+  .app{display:flex;flex-direction:column;height:auto}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:85vw;z-index:300;transform:translateX(-100%);transition:transform .3s ease-out;box-shadow:8px 0 24px rgba(0,0,0,.15)}
+  .sidebar.open{transform:translateX(0)}
+  .right{width:100%;border-left:none;border-top:1px solid var(--border)}
+  .results{max-height:70vh}
+  .burger-menu{display:flex}
+  .brand .sub{display:none}
+  .analytics-grid{grid-template-columns:1fr}
+  .pie-container{flex-direction:column;align-items:center}
+  .pie-legend{min-width:100%}
+  .toast{bottom:12px;right:12px;left:12px;max-width:none}
+}
+</style>
+</head>
+<body>
+
+<div class="tricolore"></div>
+
+<div class="bloc-marque">
+  <button class="burger-menu" id="burgerMenu" title="Menu">☰</button>
+  <div class="marianne">RF</div>
+  <div class="bloc-marque-txt">
+    <strong>Ministère de l'Éducation nationale</strong>
+    Monitor Programmes d'enseignement
+  </div>
+  <div class="bloc-marque-devise"><em>Liberté</em><em>Égalité</em><em>Fraternité</em></div>
+</div>
+
+<div class="topbar">
+  <div class="brand"><span class="dot" id="statusDot"></span>MONITOR PROGRAMMES <span class="sub">/ Éducation nationale</span></div>
+  <div class="topbar-right">
+    <div class="topbar-stat"><span>SOURCE</span><span class="val" id="tbSource">—</span></div>
+    <div class="topbar-stat"><span>PROGRAMMES</span><span class="val amber" id="tbCount">—</span></div>
+    <div class="topbar-stat"><span>NIVEAUX</span><span class="val" id="tbNiveaux">—</span></div>
+    <div class="topbar-stat"><span>DISCIPLINES</span><span class="val green" id="tbDisc">—</span></div>
+    <button class="theme-toggle" id="themeToggle" title="Basculer thème">🌙</button>
+  </div>
+</div>
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-title">🎓 Niveaux d'enseignement</div>
+      <div class="sb-count" id="sbCount">Chargez un fichier JSON</div>
+    </div>
+    <div class="sb-list" id="sbList">
+      <div class="loading" style="padding:20px;font-size:11px">Aucun niveau détecté.</div>
+    </div>
+    <div class="drop-zone" id="dropZone">
+      <div class="icon">📁</div>
+      <div class="title">Glissez-déposez programmes.json</div>
+      <div class="sub">ou cliquez pour choisir un fichier</div>
+      <input type="file" id="fileInput" accept=".json" style="display:none">
+    </div>
+  </aside>
+
+  <main class="center">
+    <div class="search-bar">
+      <input type="text" id="queryInput" placeholder="🔍 Rechercher (discipline, descriptif, texte officiel…)" autocomplete="off">
+      <select id="sortSelect">
+        <option value="year_desc">Année ↓</option>
+        <option value="year_asc">Année ↑</option>
+        <option value="niveau_asc">Niveau A→Z</option>
+        <option value="disc_asc">Discipline A→Z</option>
+      </select>
+      <button class="search-btn" id="searchBtn">▶ CHARGER</button>
+    </div>
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-view="results">📋 Programmes</button>
+      <button class="mode-tab" data-view="categories">📂 Disciplines</button>
+      <button class="mode-tab" data-view="matrix">🔲 Matrice Niveaux×Disciplines</button>
+      <button class="mode-tab" data-view="analytics">📊 Analyses</button>
+      <button class="mode-tab" data-view="timeline">📈 Évolution</button>
+      <button class="mode-tab" data-view="quality">🔍 Qualité</button>
+    </div>
+
+    <div class="help-banner" id="helpBanner" hidden></div>
+
+    <div class="filters-bar" id="filtersBar" hidden>
+      <div class="filter-group">
+        <span class="filter-label">📅 Années :</span>
+        <div id="yearTags" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">📚 Voie :</span>
+        <select id="voieSelect" style="background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:12px">
+          <option value="">— Toutes —</option>
+        </select>
+      </div>
+      <button class="filters-clear" id="filtersClear" hidden>✖ Tout effacer</button>
+    </div>
+
+    <div class="kpi-strip" id="kpiStrip"></div>
+
+    <div class="results" id="resultsArea">
+      <div class="empty">
+        <div style="font-size:48px;margin-bottom:16px">🇫🇷</div>
+        <div style="font-weight:700;color:var(--text);margin-bottom:8px;font-size:16px">Monitor Programmes d'enseignement</div>
+        <div>Chargez <strong>programmes.json</strong> depuis la barre latérale.</div>
+      </div>
+    </div>
+
+    <div class="export-group">
+      <button class="export-btn" id="exportCsv" disabled>📥 CSV</button>
+      <button class="export-btn" id="exportJson" disabled>📥 JSON</button>
+      <button class="export-btn" id="clearBtn">🗑️ Effacer</button>
+    </div>
+  </main>
+
+  <aside class="right">
+    <div class="rs-head">Intelligence Programmes</div>
+    <div class="rs-body">
+      <div class="intel-panel">
+        <div class="intel-head">💚 ENVIRONNEMENT</div>
+        <div class="intel-body">
+          <div class="intel-row"><span class="k">Source</span><span class="v cyan" id="ivSource">—</span></div>
+          <div class="intel-row"><span class="k">Statut</span><span class="v green" id="ivStatus">—</span></div>
+          <div class="intel-row"><span class="k">Chargé le</span><span class="v" id="ivDate">—</span></div>
+        </div>
+      </div>
+      <div class="intel-panel">
+        <div class="intel-head">📊 TOTAL CHARGÉ</div>
+        <div class="intel-body">
+          <div class="intel-row"><span class="k">Programmes</span><span class="v cyan" id="ivTotal">—</span></div>
+          <div class="intel-row"><span class="k">Niveaux</span><span class="v green" id="ivNiveaux">—</span></div>
+          <div class="intel-row"><span class="k">Disciplines</span><span class="v amber" id="ivDisc">—</span></div>
+          <div class="intel-row"><span class="k">Voies</span><span class="v" id="ivVoies">—</span></div>
+          <div class="intel-row"><span class="k">Années</span><span class="v amber" id="ivYears">—</span></div>
+          <div class="intel-row"><span class="k">Abrogés</span><span class="v red" id="ivAbroges">—</span></div>
+        </div>
+      </div>
+      <div class="intel-panel">
+        <div class="intel-head">🏆 TOP DISCIPLINES</div>
+        <div class="intel-body" id="topDisc">
+          <div style="text-align:center;color:var(--grey-500);font-size:11px;padding:8px">Chargez des données</div>
+        </div>
+      </div>
+      <div class="intel-panel">
+        <div class="intel-head">📅 ANNÉES D'ENTRÉE EN VIGUEUR</div>
+        <div class="intel-body" id="yearsSummary">
+          <div style="text-align:center;color:var(--grey-500);font-size:11px;padding:8px">Chargez des données</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+/* =========================================================
+   MONITOR PROGRAMMES — ÉDUCATION NATIONALE
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtNum = n => new Intl.NumberFormat('fr-FR').format(n || 0);
+const safeSet = (id, v, cls) => { const e = $(id); if (!e) return; if (v !== undefined) e.textContent = v; if (cls !== undefined) e.className = cls; return e; };
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+
+const PIE_COLORS = ['#000091','#E1000F','#16a34a','#fbbf24','#8B5CF6','#EC4899','#06B6D4','#F97316','#18753c','#6366F1','#14B8A6','#EF4444','#A855F7','#0EA5E9','#F59E0B','#10B981','#3B82F6','#84CC16','#D946EF','#FB7185'];
+const colorForIdx = i => PIE_COLORS[i % PIE_COLORS.length];
+
+const state = {
+  all: [], filtered: [], source: '—', loadedAt: null,
+  selectedLevels: new Set(), selectedYears: new Set(), selectedVoie: null,
+  page: 1, pageSize: 25, theme: localStorage.getItem('monitor-programmes-theme') || 'light'
+};
+
+/* ============ THÈME ============ */
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', state.theme);
+  const b = $('themeToggle'); if (b) b.textContent = state.theme === 'dark' ? '☀️' : '🌙';
+}
+function toggleTheme(){
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('monitor-programmes-theme', state.theme);
+  applyTheme();
+  if (state.all.length) renderResults();
+}
+
+/* ============ CHARGEMENT FICHIER ============ */
+function setupDropZone(){
+  const dz = $('dropZone'), fi = $('fileInput');
+  if (!dz || !fi) return;
+  dz.addEventListener('click', () => fi.click());
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]); });
+  fi.addEventListener('change', e => handleFile(e.target.files[0]));
+}
+
+function handleFile(file){
+  if (!file){ toast('❌ Aucun fichier', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      let data = JSON.parse(reader.result);
+      if (!Array.isArray(data)){
+        if (data.records) data = data.records.map(r => r.fields || r);
+        else data = [data];
+      }
+      loadData(data, file.name);
+    } catch(err){
+      toast('❌ JSON invalide : ' + err.message, 'error', 6000);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function loadData(data, sourceName){
+  state.all = data.map(normalizeProgramme);
+  state.source = sourceName;
+  state.loadedAt = new Date();
+  state.selectedLevels.clear();
+  state.selectedYears.clear();
+  state.selectedVoie = null;
+
+  safeSet('tbSource', sourceName.slice(0, 20), 'val green');
+  safeSet('ivSource', sourceName, 'v cyan');
+  safeSet('ivStatus', '● CHARGÉ', 'v green');
+  safeSet('ivDate', state.loadedAt.toLocaleString('fr-FR'));
+
+  const dot = $('statusDot'); if (dot) dot.classList.remove('offline');
+
+  updateStats();
+  populateLevels();
+  populateVoieSelect();
+  populateYearTags();
+  applyFilters(1);
+  toast(`🇫🇷 ${fmtNum(state.all.length)} programmes chargés`, 'success', 4000);
+}
+
+function normalizeProgramme(p){
+  const pick = (obj, ...keys) => {
+    for (const k of keys){
+      if (obj[k] !== undefined && obj[k] !== null && obj[k] !== '') return String(obj[k]);
+    }
+    return '—';
+  };
+  const abroge = pick(p, 'abroge_a_la_rentree', 'abroge', 'abrogation');
+  return {
+    voie: pick(p, 'voie'),
+    descriptif: pick(p, 'descriptif', 'description', 'titre'),
+    texte: pick(p, 'texte_officiel', 'texte', 'reference'),
+    niveau: pick(p, 'niveau_d_enseignement', 'niveau', 'cycle'),
+    discipline: pick(p, 'discipline', 'matiere', 'matière'),
+    annee: pick(p, 'entre_en_vigueur_a_la_rentree', 'annee', 'date'),
+    abroge,
+    abrogeBool: abroge !== '—' && abroge !== '-' && abroge !== '',
+    lien: pick(p, 'lien_vers_le_texte_officiel', 'lien', 'url'),
+    contenu: pick(p, 'contenu_sur_le_site', 'contenu', 'pdf')
+  };
+}
+
+/* ============ STATS ============ */
+function updateStats(){
+  const total = state.all.length;
+  const niveaux = new Set(state.all.map(p => p.niveau).filter(v => v !== '—')).size;
+  const disc = new Set(state.all.map(p => p.discipline).filter(v => v !== '—')).size;
+  const voies = new Set(state.all.map(p => p.voie).filter(v => v !== '—')).size;
+  const years = new Set(state.all.map(p => p.annee).filter(v => v !== '—')).size;
+  const abroges = state.all.filter(p => p.abrogeBool).length;
+
+  safeSet('tbCount', fmtNum(total));
+  safeSet('tbNiveaux', fmtNum(niveaux));
+  safeSet('tbDisc', fmtNum(disc));
+  safeSet('ivTotal', fmtNum(total));
+  safeSet('ivNiveaux', fmtNum(niveaux));
+  safeSet('ivDisc', fmtNum(disc));
+  safeSet('ivVoies', fmtNum(voies));
+  safeSet('ivYears', fmtNum(years));
+  safeSet('ivAbroges', fmtNum(abroges), 'v ' + (abroges ? 'red' : 'green'));
+
+  renderTopDisciplines();
+  renderYearsSummary();
+}
+
+function renderTopDisciplines(){
+  const el = $('topDisc');
+  if (!el) return;
+  if (!state.all.length){
+    el.innerHTML = '<div style="text-align:center;color:var(--grey-500);font-size:11px;padding:8px">Chargez des données</div>';
+    return;
+  }
+  const counts = {};
+  for (const p of state.all) counts[p.discipline] = (counts[p.discipline] || 0) + 1;
+  const top = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 8);
+  const max = Math.max(...top.map(x => x[1]), 1);
+  el.innerHTML = top.map(([k, v]) => {
+    const pct = (v / max) * 100;
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+        <span style="font-weight:600;color:var(--grey-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px" title="${escapeHtml(k)}">${escapeHtml(k)}</span>
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--blue-marianne);font-size:10px">${v}</span>
+      </div>
+      <div style="background:var(--grey-100);height:6px;border-radius:3px;overflow:hidden">
+        <div class="anim-bar" style="width:0%;height:100%;background:var(--gold);border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)" data-w="${pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(() => el.querySelectorAll('.anim-bar').forEach(b => b.style.width = b.dataset.w));
+}
+
+function renderYearsSummary(){
+  const el = $('yearsSummary');
+  if (!el) return;
+  if (!state.all.length){
+    el.innerHTML = '<div style="text-align:center;color:var(--grey-500);font-size:11px;padding:8px">Chargez des données</div>';
+    return;
+  }
+  const counts = {};
+  for (const p of state.all) if (p.annee !== '—') counts[p.annee] = (counts[p.annee] || 0) + 1;
+  const years = Object.keys(counts).sort().reverse();
+  if (!years.length){
+    el.innerHTML = '<div style="text-align:center;color:var(--red-marianne);font-size:11px;padding:8px">Aucune année détectée</div>';
+    return;
+  }
+  const max = Math.max(...years.map(y => counts[y]), 1);
+  el.innerHTML = years.map(y => {
+    const c = counts[y], pct = (c / max) * 100;
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+        <span style="font-family:var(--font-mono);font-weight:700;color:var(--blue-marianne)">${y}</span>
+        <span style="font-family:var(--font-mono);color:var(--text);font-size:10px">${c}</span>
+      </div>
+      <div style="background:var(--grey-100);height:6px;border-radius:3px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:var(--blue-marianne);border-radius:3px"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============ LISTE NIVEAUX ============ */
+function populateLevels(){
+  const el = $('sbList');
+  if (!el) return;
+  const counts = {};
+  for (const p of state.all) counts[p.niveau] = (counts[p.niveau] || 0) + 1;
+  const levels = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  if (!levels.length){
+    el.innerHTML = '<div class="loading" style="padding:20px;font-size:11px">Aucun niveau détecté.</div>';
+    safeSet('sbCount', '0 niveau');
+    return;
+  }
+  safeSet('sbCount', `${levels.length} niveaux · ${state.all.length} programmes`);
+  el.innerHTML = levels.map(([name, count]) => {
+    const active = state.selectedLevels.has(name);
+    return `<div class="level-item ${active ? 'active' : ''}" data-level="${escapeHtml(name)}">
+      <div class="level-check">✓</div>
+      <div class="level-info">
+        <div class="level-name" title="${escapeHtml(name)}">${escapeHtml(name)}</div>
+        <div class="level-count"><span class="badge">${count}</span>programme(s)</div>
+      </div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.level-item').forEach(item => {
+    item.addEventListener('click', e => {
+      const lvl = item.dataset.level;
+      if (e.ctrlKey || e.metaKey){
+        if (state.selectedLevels.has(lvl)) state.selectedLevels.delete(lvl);
+        else state.selectedLevels.add(lvl);
+      } else {
+        if (state.selectedLevels.size === 1 && state.selectedLevels.has(lvl)) state.selectedLevels.clear();
+        else state.selectedLevels = new Set([lvl]);
+      }
+      populateLevels();
+      applyFilters(1);
+    });
+  });
+}
+
+/* ============ FILTRES ============ */
+function populateVoieSelect(){
+  const sel = $('voieSelect');
+  if (!sel) return;
+  const voies = [...new Set(state.all.map(p => p.voie).filter(v => v !== '—'))].sort();
+  sel.innerHTML = '<option value="">— Toutes —</option>' +
+    voies.map(v => `<option value="${escapeHtml(v)}" ${state.selectedVoie === v ? 'selected' : ''}>${escapeHtml(v)}</option>`).join('');
+  sel.value = state.selectedVoie || '';
+}
+
+function populateYearTags(){
+  const el = $('yearTags');
+  if (!el) return;
+  const counts = {};
+  for (const p of state.all) if (p.annee !== '—') counts[p.annee] = (counts[p.annee] || 0) + 1;
+  const years = Object.keys(counts).sort().reverse();
+  if (!years.length){ el.innerHTML = '<span style="color:var(--grey-500);font-size:11px">—</span>'; return; }
+  el.innerHTML = years.map(y => {
+    const active = state.selectedYears.has(y);
+    return `<span class="year-tag ${active ? 'active' : ''}" data-year="${y}">${y}<span class="ycount">(${counts[y]})</span></span>`;
+  }).join('');
+  el.querySelectorAll('.year-tag').forEach(t => {
+    t.addEventListener('click', e => {
+      const y = t.dataset.year;
+      if (e.ctrlKey || e.metaKey){
+        if (state.selectedYears.has(y)) state.selectedYears.delete(y);
+        else state.selectedYears.add(y);
+      } else {
+        if (state.selectedYears.size === 1 && state.selectedYears.has(y)) state.selectedYears.clear();
+        else state.selectedYears = new Set([y]);
+      }
+      populateYearTags();
+      applyFilters(1);
+    });
+  });
+}
+
+function applyFilters(page = 1){
+  const q = $('queryInput')?.value.toLowerCase().trim() || '';
+  const sort = $('sortSelect')?.value || 'year_desc';
+  state.page = page;
+
+  state.filtered = state.all.filter(p => {
+    if (state.selectedLevels.size && !state.selectedLevels.has(p.niveau)) return false;
+    if (state.selectedYears.size && !state.selectedYears.has(p.annee)) return false;
+    if (state.selectedVoie && p.voie !== state.selectedVoie) return false;
+    if (!q) return true;
+    const hay = [p.voie, p.descriptif, p.texte, p.niveau, p.discipline, p.annee, p.abroge].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+
+  state.filtered.sort((a, b) => {
+    switch(sort){
+      case 'year_desc': return String(b.annee).localeCompare(String(a.annee));
+      case 'year_asc':  return String(a.annee).localeCompare(String(b.annee));
+      case 'niveau_asc': return String(a.niveau).localeCompare(String(b.niveau));
+      case 'disc_asc': return String(a.discipline).localeCompare(String(b.discipline));
+      default: return 0;
+    }
+  });
+
+  const hasFilter = state.selectedLevels.size || state.selectedYears.size || state.selectedVoie;
+  const fc = $('filtersClear'); if (fc) fc.hidden = !hasFilter;
+  const fb = $('filtersBar'); if (fb) fb.hidden = !state.all.length;
+
+  const eCsv = $('exportCsv'), eJson = $('exportJson');
+  if (eCsv) eCsv.disabled = !state.filtered.length;
+  if (eJson) eJson.disabled = !state.filtered.length;
+
+  renderKPIs(state.filtered);
+  renderResults();
+}
+
+/* ============ KPI ============ */
+function renderKPIs(data){
+  const count = data.length;
+  const niveaux = new Set(data.map(p => p.niveau).filter(v => v !== '—')).size;
+  const disc = new Set(data.map(p => p.discipline).filter(v => v !== '—')).size;
+  const years = new Set(data.map(p => p.annee).filter(v => v !== '—')).size;
+  const abroges = data.filter(p => p.abrogeBool).length;
+  const kpis = [
+    { label: 'Programmes', value: fmtNum(count), sub: 'filtrés', cls: '' },
+    { label: 'Niveaux', value: fmtNum(niveaux), sub: 'distincts', cls: 'amber' },
+    { label: 'Disciplines', value: fmtNum(disc), sub: 'distinctes', cls: 'green' },
+    { label: 'Années', value: fmtNum(years), sub: 'd\'entrée en vigueur', cls: 'amber' },
+    { label: 'Abrogés', value: fmtNum(abroges), sub: 'programmes', cls: abroges ? 'red' : 'green' }
+  ];
+  const strip = $('kpiStrip');
+  if (!strip) return;
+  strip.innerHTML = kpis.map(k => `<div class="kpi ${k.cls}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
+}
+
+/* ============ RENDU PRINCIPAL ============ */
+function renderResults(){
+  const view = document.querySelector('.mode-tab.active')?.dataset.view || 'results';
+  const area = $('resultsArea');
+  if (!area) return;
+  if (view === 'analytics') return renderAnalytics();
+  if (view === 'categories') return renderCategories();
+  if (view === 'matrix') return renderMatrix();
+  if (view === 'timeline') return renderTimeline();
+  if (view === 'quality') return renderQuality();
+
+  const slice = state.filtered.slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
+  if (!slice.length){
+    area.innerHTML = state.all.length
+      ? `<div class="empty">Aucun programme ne correspond aux critères.<br><button onclick="$('filtersClear').click()" style="margin-top:14px;padding:8px 16px;background:var(--blue-marianne);color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:700">✖ Effacer les filtres</button></div>`
+      : `<div class="empty"><div style="font-size:48px;margin-bottom:16px">🇫🇷</div><div style="font-weight:700;margin-bottom:8px">Aucun programme chargé</div><div>Glissez <strong>programmes.json</strong> dans la zone à gauche.</div></div>`;
+    return;
+  }
+
+  const header = `<div style="font-size:12px;color:var(--grey-700);margin-bottom:12px;padding:10px 14px;background:var(--bg-panel);border-radius:4px;border-left:4px solid var(--blue-marianne);box-shadow:0 1px 3px rgba(0,0,0,.04)">
+    <strong style="color:var(--blue-marianne)">${fmtNum(state.filtered.length)} programme(s)</strong> · page ${state.page} / ${Math.max(1, Math.ceil(state.filtered.length / state.pageSize))}
+  </div>`;
+
+  const cards = slice.map(p => {
+    const abrogeBadge = p.abrogeBool
+      ? `<span class="rc-badge abroge">abrogé ${escapeHtml(p.abroge)}</span>`
+      : `<span class="rc-badge vigueur">en vigueur</span>`;
+    const linkHtml = p.lien !== '—'
+      ? `<a href="${escapeHtml(p.lien)}" target="_blank" rel="noopener">🔗 Légifrance</a>`
+      : (p.contenu !== '—' ? `<a href="${escapeHtml(p.contenu)}" target="_blank" rel="noopener">📄 PDF</a>` : '');
+    return `<div class="result-card">
+      <div class="rc-head">
+        <div class="rc-title">${escapeHtml(p.descriptif)}</div>
+        <div class="rc-badges">
+          <span class="rc-badge niveau">${escapeHtml(p.niveau)}</span>
+          <span class="rc-badge disc">${escapeHtml(p.discipline)}</span>
+          ${p.voie !== '—' ? `<span class="rc-badge voie">${escapeHtml(p.voie)}</span>` : ''}
+          ${abrogeBadge}
+        </div>
+      </div>
+      <div class="rc-org">📜 ${escapeHtml(p.texte)}</div>
+      <div class="rc-meta">
+        <span class="tag">📅 Entrée : ${escapeHtml(p.annee)}</span>
+        ${p.abrogeBool ? `<span class="tag">🚫 Abrogé : ${escapeHtml(p.abroge)}</span>` : ''}
+        ${linkHtml}
+      </div>
+    </div>`;
+  }).join('');
+  area.innerHTML = header + cards;
+}
+
+/* ============ VUE DISCIPLINES ============ */
+function renderCategories(){
+  const area = $('resultsArea');
+  const data = state.filtered.length ? state.filtered : state.all;
+  if (!data.length){ area.innerHTML = '<div class="empty">Chargez des données.</div>'; return; }
+  const byDisc = {};
+  for (const p of data){
+    if (!byDisc[p.discipline]) byDisc[p.discipline] = { count: 0, niveaux: new Set(), voies: new Set(), abroges: 0 };
+    byDisc[p.discipline].count++;
+    if (p.niveau !== '—') byDisc[p.discipline].niveaux.add(p.niveau);
+    if (p.voie !== '—') byDisc[p.discipline].voies.add(p.voie);
+    if (p.abrogeBool) byDisc[p.discipline].abroges++;
+  }
+  const entries = Object.entries(byDisc).sort((a, b) => b[1].count - a[1].count);
+  const cards = entries.map(([disc, s], i) => `
+    <div class="cat-card" data-disc="${escapeHtml(disc)}" style="animation-delay:${Math.min(i * 20, 400)}ms">
+      <div class="cat-head">
+        <div class="cat-name">${escapeHtml(disc)}</div>
+        <div class="cat-count-badge">${s.count}</div>
+      </div>
+      <div class="cat-stats">
+        <span class="cat-stat">${s.niveaux.size} niveau(x)</span>
+        <span class="cat-stat">${s.voies.size} voie(s)</span>
+        ${s.abroges ? `<span class="cat-stat" style="color:var(--red-marianne)">${s.abroges} abrogé(s)</span>` : ''}
+      </div>
+    </div>`).join('');
+  area.innerHTML = `<div style="margin-bottom:14px;padding:12px 16px;background:var(--bg-panel);border-radius:4px;border-left:4px solid var(--gold);box-shadow:0 1px 3px rgba(0,0,0,.04)">
+    <strong style="color:var(--blue-marianne);font-size:14px">${entries.length} discipline(s)</strong>
+    <span style="color:var(--grey-500);font-size:12px;margin-left:8px">· ${fmtNum(data.length)} programme(s)</span>
+  </div><div class="cat-grid">${cards}</div>`;
+  area.querySelectorAll('.cat-card').forEach(el => {
+    el.addEventListener('click', () => {
+      const disc = el.dataset.disc;
+      $('queryInput').value = disc;
+      applyFilters(1);
+    });
+  });
+}
+
+/* ============ VUE MATRICE ============ */
+function renderMatrix(){
+  const area = $('resultsArea');
+  const data = state.filtered.length ? state.filtered : state.all;
+  if (!data.length){ area.innerHTML = '<div class="empty">Chargez des données.</div>'; return; }
+  const niveaux = [...new Set(data.map(p => p.niveau))].sort();
+  const disciplines = [...new Set(data.map(p => p.discipline))].sort();
+  const matrix = {};
+  let maxVal = 0;
+  for (const p of data){
+    const k = p.niveau + '||' + p.discipline;
+    matrix[k] = (matrix[k] || 0) + 1;
+    if (matrix[k] > maxVal) maxVal = matrix[k];
+  }
+  const header = `<tr><th class="row-head">Niveau \\ Discipline</th>${disciplines.map(d => `<th title="${escapeHtml(d)}">${escapeHtml(d.length > 16 ? d.slice(0, 14) + '…' : d)}</th>`).join('')}</tr>`;
+  const rows = niveaux.map(n => {
+    const cells = disciplines.map(d => {
+      const v = matrix[n + '||' + d] || 0;
+      if (!v) return `<td class="cell zero">·</td>`;
+      const intensity = 0.15 + 0.85 * (v / maxVal);
+      return `<td class="cell" style="background:rgba(0,0,145,${intensity.toFixed(2)});color:${intensity > 0.5 ? '#fff' : 'var(--blue-marianne)'}" title="${escapeHtml(n)} × ${escapeHtml(d)} : ${v}">${v}</td>`;
+    }).join('');
+    return `<tr><td class="row-head">${escapeHtml(n)}</td>${cells}</tr>`;
+  }).join('');
+  area.innerHTML = `
+    <div style="margin-bottom:14px;padding:12px 16px;background:var(--bg-panel);border-radius:4px;border-left:4px solid var(--blue-marianne);box-shadow:0 1px 3px rgba(0,0,0,.04)">
+      <strong style="color:var(--blue-marianne);font-size:14px">🔲 Matrice Niveaux × Disciplines</strong>
+      <span style="color:var(--grey-500);font-size:12px;margin-left:8px">· ${niveaux.length} niveaux · ${disciplines.length} disciplines · ${fmtNum(data.length)} programmes</span>
+    </div>
+    <div class="analytics-panel"><div class="panel-body"><div class="matrix-wrap"><table class="matrix"><thead>${header}</thead><tbody>${rows}</tbody></table></div></div></div>`;
+}
+
+/* ============ VUE ANALYSES ============ */
+function renderAnalytics(){
+  const area = $('resultsArea');
+  const data = state.filtered.length ? state.filtered : state.all;
+  if (!data.length){ area.innerHTML = '<div class="empty">Chargez des données.</div>'; return; }
+  const byDisc = {}, byNiveau = {}, byVoie = {}, byYear = {}, byAbrege = { 'En vigueur': 0, 'Abrogé': 0 };
+  for (const p of data){
+    byDisc[p.discipline] = (byDisc[p.discipline] || 0) + 1;
+    byNiveau[p.niveau] = (byNiveau[p.niveau] || 0) + 1;
+    byVoie[p.voie] = (byVoie[p.voie] || 0) + 1;
+    if (p.annee !== '—') byYear[p.annee] = (byYear[p.annee] || 0) + 1;
+    byAbrege[p.abrogeBool ? 'Abrogé' : 'En vigueur']++;
+  }
+  const bars = (obj, color, top) => {
+    const arr = Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, top || 12);
+    const max = Math.max(...arr.map(x => x[1]), 1);
+    return arr.map(([k, v], i) => `<div class="bar-row" style="animation:fadeInLeft .35s ease-out backwards;animation-delay:${Math.min(i * 30, 400)}ms">
+      <div class="name" title="${escapeHtml(k)}">${escapeHtml(k)}</div>
+      <div class="bar-track"><div class="bar-fill ${color || ''} anim-bar" style="width:0" data-w="${(v / max) * 100}%"></div></div>
+      <div class="val">${v}</div>
+    </div>`).join('');
+  };
+  const pie = makePieChart(byDisc, data.length);
+  area.innerHTML = `
+    <div class="analytics-grid">
+      <div class="analytics-panel"><div class="panel-head">📂 RÉPARTITION PAR DISCIPLINE</div><div class="panel-body">${pie}</div></div>
+      <div class="analytics-panel"><div class="panel-head">🎓 PROGRAMMES PAR NIVEAU</div><div class="panel-body">${bars(byNiveau, '', 20)}</div></div>
+      <div class="analytics-panel"><div class="panel-head">🛤️ PROGRAMMES PAR VOIE</div><div class="panel-body">${bars(byVoie, 'gold', 10)}</div></div>
+      <div class="analytics-panel"><div class="panel-head">📅 PROGRAMMES PAR ANNÉE D'ENTRÉE</div><div class="panel-body">${bars(byYear, 'green', 20)}</div></div>
+      <div class="analytics-panel"><div class="panel-head">🚫 STATUT (EN VIGUEUR / ABROGÉ)</div><div class="panel-body">${bars(byAbrege, '', 5)}</div></div>
+    </div>`;
+  requestAnimationFrame(() => area.querySelectorAll('.anim-bar').forEach(b => b.style.width = b.dataset.w));
+  setTimeout(() => area.querySelectorAll('.pie-slice').forEach(el => el.classList.add('visible')), 50);
+  area.querySelectorAll('.pie-slice,.pie-legend-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const disc = el.dataset.cat;
+      if (!disc) return;
+      $('queryInput').value = disc;
+      applyFilters(1);
+    });
+  });
+}
+
+function makePieChart(obj, total){
+  if (!total) return '<div style="text-align:center;color:var(--grey-500);padding:24px">Aucune donnée</div>';
+  const entries = Object.entries(obj).sort((a, b) => b[1] - a[1]);
+  const MAX = 12;
+  let display;
+  if (entries.length > MAX){
+    const top = entries.slice(0, MAX - 1);
+    const rest = entries.slice(MAX - 1);
+    display = [...top, [`📦 Autres (${rest.length})`, rest.reduce((s, [, v]) => s + v, 0)]];
+  } else display = entries;
+  const SIZE = 240, R = 100, CX = SIZE / 2, CY = SIZE / 2;
+  let angle = -Math.PI / 2;
+  const slices = [], legend = [];
+  display.forEach(([label, value], i) => {
+    const frac = value / total;
+    const a0 = angle, a1 = angle + frac * Math.PI * 2;
+    angle = a1;
+    if (frac >= 0.9999){
+      slices.push(`<circle class="pie-slice" data-cat="${escapeHtml(label)}" cx="${CX}" cy="${CY}" r="${R}" style="fill:${colorForIdx(i)};animation-delay:${i * 40}ms" />`);
+    } else if (frac > 0){
+      const x0 = CX + Math.cos(a0) * R, y0 = CY + Math.sin(a0) * R;
+      const x1 = CX + Math.cos(a1) * R, y1 = CY + Math.sin(a1) * R;
+      const large = frac > 0.5 ? 1 : 0;
+      slices.push(`<path class="pie-slice" data-cat="${escapeHtml(label)}" d="M ${CX} ${CY} L ${x0} ${y0} A ${R} ${R} 0 ${large} 1 ${x1} ${y1} Z" style="fill:${colorForIdx(i)};animation-delay:${i * 40}ms" />`);
+    }
+    legend.push(`<div class="pie-legend-item" data-cat="${escapeHtml(label)}" style="animation-delay:${i * 30}ms">
+      <div class="pie-legend-color" style="background:${colorForIdx(i)}"></div>
+      <span class="pie-legend-name" title="${escapeHtml(label)}">${escapeHtml(label)}</span>
+      <span class="pie-legend-pct">${(frac * 100).toFixed(1)}%</span>
+      <span class="pie-legend-val">${value}</span>
+    </div>`);
+  });
+  return `<div class="pie-container">
+    <div class="pie-svg-wrap">
+      <svg class="pie-svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}">${slices.join('')}</svg>
+      <div class="pie-center"><div class="pie-total">${total}</div><div class="pie-label">Programmes</div></div>
+    </div>
+    <div class="pie-legend">${legend.join('')}</div>
+  </div>`;
+}
+
+/* ============ VUE TIMELINE ============ */
+function renderTimeline(){
+  const area = $('resultsArea');
+  const data = state.filtered.length ? state.filtered : state.all;
+  if (!data.length){ area.innerHTML = '<div class="empty">Chargez des données.</div>'; return; }
+  const byYear = {};
+  for (const p of data){
+    if (p.annee === '—') continue;
+    if (!byYear[p.annee]) byYear[p.annee] = { count: 0, disc: new Set() };
+    byYear[p.annee].count++;
+    if (p.discipline !== '—') byYear[p.annee].disc.add(p.discipline);
+  }
+  const years = Object.keys(byYear).sort();
+  if (years.length < 2){
+    area.innerHTML = `<div class="empty">Pas assez d'années distinctes (${years.length}).</div>`;
+    return;
+  }
+  const W = 900, H = 340, PAD_L = 80, PAD_R = 30, PAD_T = 40, PAD_B = 50;
+  const innerW = W - PAD_L - PAD_R, innerH = H - PAD_T - PAD_B;
+  const maxCount = Math.max(...years.map(y => byYear[y].count), 1);
+  const stepX = innerW / Math.max(1, years.length - 1);
+  const scaleY = v => PAD_T + innerH - (v / maxCount) * innerH;
+  const pts = years.map((y, i) => ({ year: y, x: PAD_L + i * stepX, y: scaleY(byYear[y].count), count: byYear[y].count, disc: byYear[y].disc.size }));
+  const linePath = pts.map((p, i) => (i === 0 ? 'M' : 'L') + ` ${p.x} ${p.y}`).join(' ');
+  const areaPath = linePath + ` L ${pts[pts.length - 1].x} ${PAD_T + innerH} L ${pts[0].x} ${PAD_T + innerH} Z`;
+  const grid = [0, 0.25, 0.5, 0.75, 1].map(f => {
+    const y = PAD_T + innerH - f * innerH;
+    return `<line class="line-grid" x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" />
+      <text class="line-axis" x="${PAD_L - 8}" y="${y + 4}" text-anchor="end">${Math.round(f * maxCount)}</text>`;
+  }).join('');
+  const xLabels = pts.map(p => `<text class="line-axis" x="${p.x}" y="${H - PAD_B + 18}" text-anchor="middle" font-weight="700">${p.year}</text>`).join('');
+  const circles = pts.map((p, i) => `<circle class="line-point" cx="${p.x}" cy="${p.y}" r="5" style="opacity:0;animation:popIn .4s ease-out ${600 + i * 80}ms forwards"><title>${p.year} : ${p.count} programmes · ${p.disc} disciplines</title></circle>`).join('');
+  const variations = pts.slice(1).map((p, i) => {
+    const prev = pts[i];
+    const delta = prev.count ? ((p.count - prev.count) / prev.count) * 100 : 0;
+    const cls = delta > 0 ? 'pos' : delta < 0 ? 'neg' : 'neu';
+    const arrow = delta > 0 ? '▲' : delta < 0 ? '▼' : '=';
+    return `<div style="display:grid;grid-template-columns:1fr 80px 80px 100px;gap:8px;padding:8px 0;border-bottom:1px solid var(--grey-100);font-size:12px;font-family:var(--font-mono)">
+      <div style="font-weight:600;color:var(--grey-700)">${prev.year} → ${p.year}</div>
+      <div style="text-align:right">${prev.count}</div>
+      <div style="text-align:right">${p.count}</div>
+      <div style="text-align:right;font-weight:700;color:${delta > 0 ? 'var(--green)' : delta < 0 ? 'var(--red-marianne)' : 'var(--grey-500)'}">${arrow} ${Math.abs(delta).toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+  area.innerHTML = `
+    <div class="analytics-panel" style="margin-bottom:14px">
+      <div class="panel-head">📈 ÉVOLUTION DES PROGRAMMES PAR ANNÉE D'ENTRÉE EN VIGUEUR</div>
+      <div class="panel-body"><div class="line-chart-wrap">
+        <svg class="line-chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+          <defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#000091" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#000091" stop-opacity="0.02"/>
+          </linearGradient></defs>
+          ${grid}
+          <path class="line-area" d="${areaPath}" />
+          <path class="line-path" d="${linePath}" />
+          ${circles}
+          ${xLabels}
+        </svg>
+      </div></div>
+    </div>
+    <div class="analytics-panel">
+      <div class="panel-head">📊 VARIATIONS ANNUELLES</div>
+      <div class="panel-body">
+        <div style="display:grid;grid-template-columns:1fr 80px 80px 100px;gap:8px;padding:8px 0;border-bottom:2px solid var(--border);font-size:10px;font-weight:700;color:var(--blue-marianne);text-transform:uppercase;letter-spacing:.5px">
+          <div>Période</div><div style="text-align:right">N-1</div><div style="text-align:right">N</div><div style="text-align:right">Variation</div>
+        </div>
+        ${variations || '<div style="padding:14px;text-align:center;color:var(--grey-500)">Pas assez d\'années</div>'}
+      </div>
+    </div>`;
+}
+
+/* ============ VUE QUALITÉ ============ */
+function renderQuality(){
+  const area = $('resultsArea');
+  if (!state.all.length){ area.innerHTML = '<div class="empty">Chargez des données.</div>'; return; }
+  const total = state.all.length;
+  const missing = {
+    voie: state.all.filter(p => p.voie === '—').length,
+    discipline: state.all.filter(p => p.discipline === '—').length,
+    niveau: state.all.filter(p => p.niveau === '—').length,
+    annee: state.all.filter(p => p.annee === '—').length,
+    texte: state.all.filter(p => p.texte === '—').length,
+    lien: state.all.filter(p => p.lien === '—' && p.contenu === '—').length
+  };
+  const completeness = ((total * 6 - Object.values(missing).reduce((s, v) => s + v, 0)) / (total * 6)) * 100;
+  const fields = [
+    ['Voie', 'voie'], ['Discipline', 'discipline'], ['Niveau', 'niveau'],
+    ['Année', 'annee'], ['Texte officiel', 'texte'], ['Lien / contenu', 'lien']
+  ];
+  const rows = fields.map(([label, key]) => {
+    const m = missing[key];
+    const pct = ((total - m) / total) * 100;
+    const color = pct > 95 ? 'var(--green)' : pct > 80 ? '#8a5e00' : 'var(--red-marianne)';
+    return `<div style="display:grid;grid-template-columns:150px 1fr 80px 60px;gap:10px;padding:8px 0;font-size:12px;font-family:var(--font-mono);border-bottom:1px solid var(--grey-100);align-items:center">
+      <strong style="color:var(--grey-700);font-family:var(--font-sans)">${label}</strong>
+      <div style="background:var(--grey-100);height:14px;border-radius:3px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${color};border-radius:3px;transition:width 1s"></div>
+      </div>
+      <span style="text-align:right;color:${color};font-weight:700">${pct.toFixed(1)}%</span>
+      <span style="text-align:right;color:var(--grey-500)">${m ? m + ' manquant(s)' : '✓'}</span>
+    </div>`;
+  }).join('');
+  area.innerHTML = `<div style="max-width:900px;margin:14px auto">
+    <div style="background:var(--bg-panel);border:1px solid var(--border);border-left:4px solid ${completeness > 95 ? 'var(--green)' : completeness > 80 ? 'var(--gold)' : 'var(--red-marianne)'};border-radius:6px;padding:16px 20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:700;color:var(--blue-marianne);margin-bottom:14px">${completeness > 95 ? '✅' : completeness > 80 ? '⚠️' : '❌'} Complétude des métadonnées</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">
+        <div style="background:var(--grey-50);border:1px solid var(--border);border-radius:4px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:800;font-family:var(--font-mono);color:var(--blue-marianne)">${fmtNum(total)}</div>
+          <div style="font-size:10px;color:var(--grey-500);text-transform:uppercase;letter-spacing:.5px;margin-top:6px;font-weight:700">Programmes</div>
+        </div>
+        <div style="background:var(--grey-50);border:1px solid var(--border);border-radius:4px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:800;font-family:var(--font-mono);color:${completeness > 95 ? 'var(--green)' : completeness > 80 ? '#8a5e00' : 'var(--red-marianne)'}">${completeness.toFixed(1)}%</div>
+          <div style="font-size:10px;color:var(--grey-500);text-transform:uppercase;letter-spacing:.5px;margin-top:6px;font-weight:700">Complétude</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:6px;padding:16px 20px">
+      <div style="font-size:15px;font-weight:700;color:var(--blue-marianne);margin-bottom:14px">📋 Détail par champ</div>
+      ${rows}
+    </div>
+  </div>`;
+}
+
+/* ============ PAGINATION ============ */
+function toast(msg, type = 'info', duration = 3000){
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), duration);
+}
+
+/* ============ ÉVÉNEMENTS ============ */
+$('searchBtn')?.addEventListener('click', () => state.all.length ? applyFilters(1) : $('fileInput').click());
+$('queryInput')?.addEventListener('input', () => {
+  clearTimeout(window._deb);
+  window._deb = setTimeout(() => { if (state.all.length) applyFilters(1); }, 250);
+});
+$('sortSelect')?.addEventListener('change', () => { if (state.all.length) applyFilters(1); });
+$('voieSelect')?.addEventListener('change', e => { state.selectedVoie = e.target.value || null; applyFilters(1); });
+$('filtersClear')?.addEventListener('click', () => {
+  state.selectedLevels.clear();
+  state.selectedYears.clear();
+  state.selectedVoie = null;
+  $('queryInput').value = '';
+  $('voieSelect').value = '';
+  populateLevels();
+  populateYearTags();
+  applyFilters(1);
+});
+document.querySelectorAll('.mode-tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.mode-tab').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  renderResults();
+}));
+$('themeToggle')?.addEventListener('click', toggleTheme);
+$('burgerMenu')?.addEventListener('click', () => {
+  $('sidebar')?.classList.toggle('open');
+  $('mobileOverlay')?.classList.toggle('visible');
+});
+$('mobileOverlay')?.addEventListener('click', () => {
+  $('sidebar')?.classList.remove('open');
+  $('mobileOverlay')?.classList.remove('visible');
+});
+$('clearBtn')?.addEventListener('click', () => {
+  state.all = []; state.filtered = [];
+  state.selectedLevels.clear(); state.selectedYears.clear(); state.selectedVoie = null;
+  $('queryInput').value = '';
+  $('fileInput').value = '';
+  safeSet('tbCount', '—'); safeSet('tbNiveaux', '—'); safeSet('tbDisc', '—'); safeSet('tbSource', '—');
+  safeSet('ivTotal', '—'); safeSet('ivNiveaux', '—'); safeSet('ivDisc', '—'); safeSet('ivVoies', '—'); safeSet('ivYears', '—'); safeSet('ivAbroges', '—');
+  safeSet('sbCount', 'Chargez un fichier JSON');
+  $('sbList').innerHTML = '<div class="loading" style="padding:20px;font-size:11px">Aucun niveau détecté.</div>';
+  $('topDisc').innerHTML = '<div style="text-align:center;color:var(--grey-500);font-size:11px;padding:8px">Chargez des données</div>';
+  $('yearsSummary').innerHTML = '<div style="text-align:center;color:var(--grey-500);font-size:11px;padding:8px">Chargez des données</div>';
+  $('resultsArea').innerHTML = `<div class="empty"><div style="font-size:48px;margin-bottom:16px">🇫🇷</div><div style="font-weight:700;margin-bottom:8px">Aucun programme chargé</div><div>Glissez <strong>programmes.json</strong>.</div></div>`;
+  toast('🗑️ Données effacées', 'info');
+});
+$('exportCsv')?.addEventListener('click', () => {
+  const cols = ['voie', 'descriptif', 'texte', 'niveau', 'discipline', 'annee', 'abroge', 'lien'];
+  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = [cols.join(',')];
+  for (const p of state.filtered) rows.push(cols.map(c => esc(p[c])).join(','));
+  const blob = new Blob(['\ufeff' + rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'programmes-education-nationale.csv';
+  a.click();
+  toast('📥 CSV exporté', 'success');
+});
+$('exportJson')?.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state.filtered, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'programmes-education-nationale.json';
+  a.click();
+  toast('📥 JSON exporté', 'success');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)){
+    e.preventDefault(); $('queryInput')?.focus();
+  }
+});
+
+/* ============ INIT ============ */
+(async () => {
+  applyTheme();
+  setupDropZone();
+  const dot = $('statusDot'); if (dot) dot.classList.add('offline');
+  safeSet('ivStatus', '● EN ATTENTE', 'v amber');
+  safeSet('tbSource', 'AUCUNE', 'val amber');
+})();
+</script>
+</body>
+</html>
