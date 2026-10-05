@@ -1,23 +1,27 @@
 <div align="center">
 
-# Monitor Programmes — Éducation Nationale
+# Monitor Educasol — Éducation Nationale
 
 **Tableau de bord d'analyse des programmes d'enseignement français**
 
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/fr/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/fr/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/fr/docs/Web/JavaScript)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://github.com/gunout/monitor-educasol/blob/main/LICENSE)
 
+[![GitHub](https://img.shields.io/badge/GitHub-gunout%2Fmonitor--educasol-181717?style=for-the-badge&logo=github)](https://github.com/gunout/monitor-educasol)
 [![Made in France](https://img.shields.io/badge/Made%20in-France-000091?style=for-the-badge)](https://www.education.gouv.fr)
 [![Éducation Nationale](https://img.shields.io/badge/Éducation-Nationale-E1000F?style=for-the-badge)](https://www.education.gouv.fr)
 [![Open Data](https://img.shields.io/badge/Open%20Data-data.education.gouv.fr-16a34a?style=for-the-badge)](https://data.education.gouv.fr)
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/)
-[![Statut](https://img.shields.io/badge/statut-stable-brightgreen?style=flat-square)](https://github.com/)
-[![Zéro dépendance](https://img.shields.io/badge/dépendances-0-success?style=flat-square)](https://github.com/)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/gunout/monitor-educasol)
+[![Statut](https://img.shields.io/badge/statut-stable-brightgreen?style=flat-square)](https://github.com/gunout/monitor-educasol)
+[![Dernier commit](https://img.shields.io/github/last-commit/gunout/monitor-educasol?style=flat-square)](https://github.com/gunout/monitor-educasol/commits/main)
+[![Taille du dépôt](https://img.shields.io/github/repo-size/gunout/monitor-educasol?style=flat-square)](https://github.com/gunout/monitor-educasol)
 
 **Analysez, filtrez et visualisez les programmes officiels de l'Éducation nationale dans un dashboard tout-en-un.**
+
+[Accéder au dépôt](https://github.com/gunout/monitor-educasol) · [Signaler un bug](https://github.com/gunout/monitor-educasol/issues) · [Demander une fonctionnalité](https://github.com/gunout/monitor-educasol/issues)
 
 </div>
 
@@ -25,11 +29,13 @@
 
 ## Présentation
 
-**Monitor Programmes** est un tableau de bord web autonome (un seul fichier HTML) permettant d'explorer, filtrer et analyser les programmes d'enseignement officiels publiés par le Ministère de l'Éducation nationale.
+**Monitor Educasol** est un tableau de bord web autonome (un seul fichier HTML) permettant d'explorer, filtrer et analyser les programmes d'enseignement officiels publiés par le Ministère de l'Éducation nationale.
 
 Il consomme un fichier `programmes.json` structuré, extrait des données ouvertes du Bulletin officiel et de la plateforme data.education.gouv.fr, et offre une visualisation complète : liste filtrable, matrice croisée, graphiques, évolution temporelle et rapport de qualité.
 
 Cas d'usage : recherche pédagogique, veille curriculaire, comparaison de programmes, préparation de concours (CAPES, Agrégation), documentation pour formateurs et inspecteurs.
+
+Dépôt officiel : https://github.com/gunout/monitor-educasol
 
 ---
 
@@ -55,23 +61,24 @@ Cas d'usage : recherche pédagogique, veille curriculaire, comparaison de progra
 
 Prérequis : un navigateur moderne (Firefox, Chrome, Edge, Safari). Aucune installation logicielle.
 
-Étape 1 : cloner le projet
+Étape 1 : cloner le dépôt
 
-    git clone https://github.com/votre-utilisateur/monitor-programmes.git
+    git clone https://github.com/gunout/monitor-educasol.git
 
 Étape 2 : entrer dans le dossier
 
-    cd monitor-programmes
+    cd monitor-educasol
 
 Étape 3 : vérifier les fichiers présents
 
-    monitor-programmes.html
+    index.html
     programmes.json
     README.md
+    LICENSE
 
 Étape 4 : ouvrir le dashboard
 
-    firefox monitor-programmes.html
+    firefox index.html
 
 ---
 
@@ -79,7 +86,7 @@ Prérequis : un navigateur moderne (Firefox, Chrome, Edge, Safari). Aucune insta
 
 Chargement des données
 
-1. Ouvrez `monitor-programmes.html` dans votre navigateur.
+1. Ouvrez `index.html` dans votre navigateur.
 2. Glissez-déposez `programmes.json` dans la zone prévue à gauche.
 3. Le dashboard s'initialise : KPI, liste des niveaux, top disciplines.
 
@@ -121,11 +128,11 @@ Raccourcis clavier
 
 ## Structure du projet
 
-    monitor-programmes/
-        monitor-programmes.html     Dashboard tout-en-un
+    monitor-educasol/
+        index.html                  Dashboard tout-en-un
         programmes.json             Données source (100 programmes)
-        convert.py                  Optionnel : conversion texte vers JSON
         README.md                   Ce fichier
+        LICENSE                     Licence MIT
 
 Structure d'un enregistrement programmes.json
 
@@ -227,7 +234,9 @@ Les données proviennent de sources publiques officielles et sont réutilisables
 
 ## Auteur
 
-**Gleaphe**
+**Gunout**
+
+- GitHub : https://github.com/gunout
 - La Réunion (974)
 
 ---
